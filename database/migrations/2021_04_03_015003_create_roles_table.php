@@ -17,6 +17,10 @@ class CreateRolesTable extends Migration
             $table->uuid('id')->primary();
             $table->string('name');
         });
+
+        Schema::table('users', function($table) {
+            $table->foreign('role_id')->references('id')->on('roles');
+        });
     }
 
     /**
