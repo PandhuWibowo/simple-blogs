@@ -24,16 +24,22 @@
     <div class="card-body">
       <p class="login-box-msg">Sign in to start your session</p>
 
-      <form action="{{ url('signin') }}" method="post">
+      <form action="{{ url('signin/auth/process') }}" method="post">
         @csrf
         @method('POST')
+        @if(Session::get('failed'))
+          <div class="alert alert-danger">
+            {{ Session::get('failed') }}
+          </div>
+        @endif
         <div class="input-group mb-3">
-          <input type="email" class="form-control" placeholder="Email" name="email" id="email">
+          <input type="email" class="form-control" placeholder="Email" name="email" id="email" value="{{ old('email') }}">
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-envelope"></span>
             </div>
           </div>
+          <span class="text-danger">@error('email'){{ $message }}@enderror</span>
         </div>
         <div class="input-group mb-3">
           <input type="password" class="form-control" placeholder="Password" name="password" id="password">
@@ -42,6 +48,7 @@
               <span class="fas fa-lock"></span>
             </div>
           </div>
+          <span class="text-danger">@error('password'){{ $message }}@enderror</span>
         </div>
         <div class="row">
           <div class="col-8">
