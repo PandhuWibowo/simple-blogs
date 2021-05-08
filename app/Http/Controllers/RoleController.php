@@ -7,6 +7,6 @@ use Illuminate\Http\Request;
 class RoleController extends Controller
 {
     function index() {
-        return view('roles.index');
+        return view('dashboard.roles.index');
     }
 }

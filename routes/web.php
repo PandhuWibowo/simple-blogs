@@ -43,3 +43,25 @@ Route::get('signin/auth/signout', [LoginController::class, 'signout'])->name('si
 Route::group(['middleware'=>'AuthCheck'], function() {
     Route::view('dashboard', 'dashboard.index');
 });
+
+Route::get('/greeting', function () {
+    return 'Hello World';
+});
+
+// Route::get('/users/{id}', function ($id) {
+//     return 'User : ' . $id;
+// });
+
+// Route::get('/users/profile', function () {
+//     return 'Banyak User';
+// });
+
+Route::prefix('users')->group(function() {
+    Route::get('/{id}', function($id) {
+        return 'User : ' . $id;
+    });
+
+    Route::get('profile', function() {
+        return 'Banyak User';
+    });
+});
