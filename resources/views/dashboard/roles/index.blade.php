@@ -11,6 +11,8 @@
   <link rel="stylesheet" href="{{ asset('assets') }}/plugins/fontawesome-free/css/all.min.css">
   <!-- Theme style -->
   <link rel="stylesheet" href="{{ asset('assets') }}/dist/css/adminlte.min.css">
+  <link rel="stylesheet" href="{{ asset('assets') }}/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <body class="hold-transition sidebar-mini">
 <div class="wrapper">
@@ -25,7 +27,7 @@
     <ul class="navbar-nav ml-auto">
       <!-- Navbar Search -->
       <li class="nav-item">
-        <a class="nav-link" href="#" role="button">
+        <a class="nav-link" href="{{ url('signin/auth/signout') }}" role="button">
             <i class="fas fa-sign-out-alt"></i>
           Sign Out
         </a>
@@ -43,7 +45,7 @@
         <div class="info">
           <a href="#" class="d-block">
               @php
-                if(Session::has('name')) Session::get('name');
+                if(Session::has('name')) echo Session::get('name');
                 else echo "Unknown";
               @endphp
           </a>
@@ -124,6 +126,87 @@
 
           </div>
           <!--/.col (left) -->
+
+          <div class="col-12">
+            <div class="card">
+              <div class="card-body">
+                <table id="example1" class="table table-bordered table-striped">
+                  <thead>
+                  <tr>
+                    <th>Role Name</th>
+                    <th>Action</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                    @foreach ($roles as $item)
+                      <tr>
+                        <td>{{ $item->name }}</td>
+                        <td>
+                          <a class="editRole btn btn-info" data-id="{{ $item->id }}" data-name="{{ $item->name }}">Edit</a>
+                          <a class="removeRole btn btn-danger" data-id="{{ $item->id }}">Remove</a>
+                        </td>
+                      </tr>
+                    @endforeach
+                  </tfoot>
+                </table>
+                <form>
+                  <div class="modal fade show" id="editRoleModal" aria-modal="true" role="dialog">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title">Edit Role</h4>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          <input type="hidden" class="form-control" id="editId" readonly required>
+                          <div class="card-body">
+                            <div class="form-group">
+                              <label for="role">Role Name</label>
+                              <input type="text" class="form-control" id="editRoleName" placeholder="Role Name" required>
+                            </div>
+                          </div>
+                          <!-- /.card-body -->
+                        </div>
+                        <div class="modal-footer justify-content-between">
+                          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                          <button type="submit" class="btn btn-primary" id="btnUpdate">Save changes</button>
+                        </div>
+                      </div>
+                      <!-- /.modal-content -->
+                    </div>
+                    <!-- /.modal-dialog -->
+                  </div>
+                </form>
+
+                <form action="">
+                  <div class="modal fade show" id="removeRoleModal" aria-modal="true" role="dialog">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title">Remove Role</h4>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          <input type="hidden" class="form-control" id="removeId" readonly required>
+                        </div>
+                        <div class="modal-footer justify-content-between">
+                          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                          <button type="submit" class="btn btn-danger" id="btnRemove">Yes, remove</button>
+                        </div>
+                      </div>
+                      <!-- /.modal-content -->
+                    </div>
+                    <!-- /.modal-dialog -->
+                  </div>
+                </form>
+              </div>
+              <!-- /.card-body -->
+            </div>
+          </div>
         </div>
         <!-- /.row -->
       </div><!-- /.container-fluid -->
@@ -157,10 +240,172 @@
 <!-- AdminLTE for demo purposes -->
 <script src="{{ asset('assets') }}/dist/js/demo.js"></script>
 <!-- Page specific script -->
+<script src="{{ asset('assets') }}/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="{{ asset('assets') }}/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="{{ asset('assets') }}/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="{{ asset('assets') }}/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+
+<script>
+  $(function () {
+    $("#example1").DataTable({
+      "responsive": true, "lengthChange": false, "autoWidth": false,
+      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+    $('#example1').DataTable({
+      "paging": true,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": true,
+      "info": true,
+      "autoWidth": false,
+      "responsive": true,
+    });
+  });
+</script>
 <script>
 $(function () {
   bsCustomFileInput.init();
 });
+</script>
+
+<script>
+  function csrfToken() {
+    $.ajaxSetup({
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      }
+    });
+  }
+
+  $(document).ready(function() {
+    $('#btnSave').on('click', function(e) {
+      e.preventDefault() // Mencegah formnya ke refresh
+      const roleName = $('#roleName').val() // Mengambil value dari field role name
+      csrfToken() // Memanggil token Laravel
+
+      try {
+        if (typeof roleName !== 'string' || !roleName) {
+          alert('Role name should be non-empty string')
+          return
+        }
+
+        $.ajax({
+          url: '/roles',
+          type: 'POST',
+          dataType: 'json',
+          async: true,
+          data: {roleName},
+          error: function (err) {
+            console.error(err)
+            alert(err.message)
+            return
+          },
+          success: function (response) {
+            console.log(response)
+            alert(response.message)
+            location.href="roles"
+            return
+          }
+        })
+      } catch (error) {
+        console.error(error)
+        alert(error.message)
+        return
+      }
+    })
+
+    $('.editRole').on('click', function() {
+      const id = $(this).data('id')
+      const roleName = $(this).data('name')
+
+      $("#editRoleName").val(roleName)
+      $("#editId").val(id)
+      $("#editRoleModal").modal('show')
+    })
+
+    $("#btnUpdate").on('click', function(e) {
+      e.preventDefault()
+      const roleName = $("#editRoleName").val()
+      const id = $("#editId").val()
+      csrfToken()
+
+      try {
+        if (typeof roleName !== 'string' || !roleName) {
+          alert('Role name should be non-empty string')
+          return
+        }
+
+        if (typeof id !== 'string' || !id) {
+          alert('Id name should be non-empty string')
+          return
+        }
+
+        $.ajax({
+          url: `/roles/update/${id}`,
+          type: 'PUT',
+          dataType: 'json',
+          async: true,
+          data: {roleName},
+          error: function (err) {
+            console.error(err)
+            alert(err.message)
+            return
+          },
+          success: function (response) {
+            console.log(response)
+            alert(response.message)
+            location.href="roles"
+            return
+          }
+        })
+      } catch (error) {
+        console.error(error)
+        alert(error.message)
+        return
+      }
+    })
+
+    $(".removeRole").on('click', function() {
+      const id = $(this).data('id')
+      $("#removeId").val(id)
+      $("#removeRoleModal").modal('show')
+    })
+
+    $("#btnRemove").on('click', function(e) {
+      e.preventDefault()
+      const id = $("#removeId").val()
+      csrfToken()
+
+      try {
+        if (typeof id !== 'string' || !id) {
+          alert('Id should be non-empty string')
+          return
+        }
+
+        $.ajax({
+          url: `/roles/delete/${id}`,
+          type: 'DELETE',
+          dataType: 'json',
+          async: true,
+          error: function (err) {
+            console.error(err)
+            alert(err.message)
+            return
+          },
+          success: function (response) {
+            console.log(response)
+            alert(response.message)
+            location.href="roles"
+            return
+          }
+        })
+      } catch (error) {
+        console.error(error)
+        alert(error.message)
+        return
+      }
+    })
+  })
 </script>
 </body>
 </html>

@@ -27,7 +27,7 @@ class LoginController extends Controller
                 session()->put('name', $userInfo->name);
                 session()->put('email', $userInfo->email);
                 session()->put('role_id', $userInfo->role_id);
-                return redirect()->intended('dashboard');
+                return redirect()->intended('roles');
             } else return back()->with('failed', 'Password salah');
         }
     }

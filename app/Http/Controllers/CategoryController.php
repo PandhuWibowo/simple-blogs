@@ -3,17 +3,35 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Category;
+use Illuminate\Support\Str;
 
 class CategoryController extends Controller
 {
     public function index()
     {
-        return view('dashboard.categories.index');
+        $categories = Category::all();
+        return view('dashboard.categories.index', [
+            'categories' => $categories
+        ]);
     }
     
-    public function create()
+    public function create(Request $request)
     {
-        //
+        $category = new Category([
+            'id' => Str::uuid(),
+            'name' => $request->name
+        ]);
+
+        if ($category->save()) return response()->json([
+            'status' => 201,
+            'message' => 'Success'
+        ]);
+
+        return response()->json([
+            'status' => 400,
+            'message' => 'Failed'
+        ]);
     }
 
     public function store(Request $request)
@@ -31,13 +49,33 @@ class CategoryController extends Controller
         //
     }
 
-    public function update(Request $request, $id)
-    {
-        //
+    function update($id, Request $request) {
+        $category = Category::find($id);
+
+        $category->name = $request->name;
+
+        if ($category->save()) return response()->json([
+            'status' => 200,
+            'message' => 'Success'
+        ]);
+
+        return response()->json([
+            'status' => 400,
+            'message' => 'Failed'
+        ]);
     }
 
-    public function destroy($id)
-    {
-        //
+    function delete($id) {
+        $category = Category::find($id);
+
+        if ($category->delete()) return response()->json([
+            'status' => 200,
+            'message' => 'Success'
+        ]);
+
+        return response()->json([
+            'status' => 400,
+            'message' => 'Failed'
+        ]);
     }
 }

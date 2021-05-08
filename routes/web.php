@@ -7,16 +7,32 @@ use App\Http\Controllers\TagController;
 use App\Http\Controllers\Public\SignInController;
 use App\Http\Controllers\LoginController;
 
-Route::get('roles', [
-    RoleController::class, 'index'
-]);
+/**
+ * ================================
+ * Roles
+ * ================================
+ */
+
+Route::prefix('roles')->group(function() {
+    Route::get('/', [RoleController::class, 'index']);
+    Route::post('/', [RoleController::class, 'create']);
+    Route::put('/update/{id}', [RoleController::class, 'update']);
+    Route::delete('/delete/{id}', [RoleController::class, 'delete']);
+});
+
 
 /**
  * ================================
  * Categories
  * ================================
  */
-Route::resource('categories', CategoryController::class);
+// Route::resource('categories', CategoryController::class);
+Route::prefix('categories')->group(function() {
+    Route::get('/', [CategoryController::class, 'index']);
+    Route::post('/', [CategoryController::class, 'create']);
+    Route::put('/update/{id}', [CategoryController::class, 'update']);
+    Route::delete('/delete/{id}', [CategoryController::class, 'delete']);
+});
 
 /**
  * ================================
