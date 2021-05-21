@@ -6,7 +6,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\Public\SignInController;
 use App\Http\Controllers\LoginController;
-
+use App\Http\Controllers\UserController;
 /**
  * ================================
  * Roles
@@ -60,24 +60,14 @@ Route::group(['middleware'=>'AuthCheck'], function() {
     Route::view('dashboard', 'dashboard.index');
 });
 
-Route::get('/greeting', function () {
-    return 'Hello World';
-});
-
-// Route::get('/users/{id}', function ($id) {
-//     return 'User : ' . $id;
-// });
-
-// Route::get('/users/profile', function () {
-//     return 'Banyak User';
-// });
-
+/**
+ * ================================
+ * Dashboard
+ * ================================
+ */
 Route::prefix('users')->group(function() {
-    Route::get('/{id}', function($id) {
-        return 'User : ' . $id;
-    });
-
-    Route::get('profile', function() {
-        return 'Banyak User';
-    });
+    Route::get('/', [UserController::class, 'index']);
+    Route::post('/', [UserController::class, 'store']);
+    Route::delete('delete/{id}', [UserController::class, 'delete']);
+    Route::put('update/{id}', [UserController::class, 'update']);
 });

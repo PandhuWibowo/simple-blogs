@@ -73,6 +73,14 @@
               </p>
             </a>
           </li>
+          <li class="nav-item">
+            <a href="{{ url('users') }}" class="nav-link">
+                <i class="nav-icon fas fa-user"></i>
+              <p>
+                Users
+              </p>
+            </a>
+          </li>
         </ul>
       </nav>
       <!-- /.sidebar-menu -->
