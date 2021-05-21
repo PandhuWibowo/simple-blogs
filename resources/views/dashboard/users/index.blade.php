@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Roles</title>
+  <title>Users</title>
 
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -81,6 +81,14 @@
               </p>
             </a>
           </li>
+          <li class="nav-item">
+            <a href="{{ url('posts') }}" class="nav-link">
+                <i class="nav-icon fas fa-newspaper"></i>
+              <p>
+                Posts
+              </p>
+            </a>
+          </li>
         </ul>
       </nav>
       <!-- /.sidebar-menu -->
@@ -136,11 +144,11 @@
                   <div class="form-group">
                     <label for="role">Role</label>
                     <select class="form-control" id="role_id">
-                        <option selected disabled>Please select the Role</option>
-                        @foreach($roles as $role)
-                            <option value="{{ $role->id }}">{{ $role->name }}</option>
-                        @endforeach
-                      </select>
+                      <option selected disabled>Please select the Role</option>
+                      @foreach($roles as $role)
+                          <option value="{{ $role->id }}">{{ $role->name }}</option>
+                      @endforeach
+                    </select>
                   </div>
                 </div>
                 <!-- /.card-body -->

@@ -7,6 +7,8 @@ use App\Http\Controllers\TagController;
 use App\Http\Controllers\Public\SignInController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\PostController;
+
 /**
  * ================================
  * Roles
@@ -62,7 +64,7 @@ Route::group(['middleware'=>'AuthCheck'], function() {
 
 /**
  * ================================
- * Dashboard
+ * User
  * ================================
  */
 Route::prefix('users')->group(function() {
@@ -70,4 +72,14 @@ Route::prefix('users')->group(function() {
     Route::post('/', [UserController::class, 'store']);
     Route::delete('delete/{id}', [UserController::class, 'delete']);
     Route::put('update/{id}', [UserController::class, 'update']);
+});
+
+/**
+ * ================================
+ * Posts
+ * ================================
+ */
+Route::prefix('posts')->group(function() {
+    Route::get('/', [PostController::class, 'index']);
+    Route::post('/', [PostController::class, 'store']);
 });

@@ -3,15 +3,15 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Categories</title>
+  <title>Posts</title>
 
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
   <!-- Font Awesome -->
   <link rel="stylesheet" href="{{ asset('assets') }}/plugins/fontawesome-free/css/all.min.css">
   <!-- Theme style -->
-  <link rel="stylesheet" href="{{ asset('assets') }}/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
   <link rel="stylesheet" href="{{ asset('assets') }}/dist/css/adminlte.min.css">
+  <link rel="stylesheet" href="{{ asset('assets') }}/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
   <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <body class="hold-transition sidebar-mini">
@@ -45,8 +45,8 @@
         <div class="info">
           <a href="#" class="d-block">
               @php
-                  if(Session::has('name')) Session::get('name');
-                  else echo "Unknown";
+                if(Session::has('name')) echo Session::get('name');
+                else echo "Unknown";
               @endphp
           </a>
         </div>
@@ -57,7 +57,7 @@
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
-          <li class="nav-item">
+          <li class="nav-item active">
             <a href="{{ url('roles') }}" class="nav-link">
               <i class="nav-icon fas fa-user-tag"></i>
               <p>
@@ -65,7 +65,7 @@
               </p>
             </a>
           </li>
-          <li class="nav-item active">
+          <li class="nav-item">
             <a href="{{ url('categories') }}" class="nav-link">
                 <i class="nav-icon fas fa-tags"></i>
               <p>
@@ -103,12 +103,12 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>Categories</h1>
+            <h1>Posts</h1>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="#">Home</a></li>
-              <li class="breadcrumb-item active">Categories</li>
+              <li class="breadcrumb-item active">Posts</li>
             </ol>
           </div>
         </div>
@@ -127,8 +127,29 @@
               <form>
                 <div class="card-body">
                   <div class="form-group">
-                    <label for="name">Category Name</label>
-                    <input type="text" class="form-control" id="name" placeholder="Category Name" required>
+                    <label for="title">Title</label>
+                    <input type="text" class="form-control" id="title" placeholder="Title" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="category">Category</label>
+                    <select class="form-control" id="category_id">
+                      <option selected disabled>Please select the Category</option>
+                      @foreach($categories as $category)
+                          <option value="{{ $category->id }}">{{ $category->name }}</option>
+                      @endforeach
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="content">Content</label>
+                    <textarea name="content" id="content" cols="30" rows="10" class="form-control"></textarea>
+                  </div>
+                  <div class="form-group">
+                    <label for="category">Published</label>
+                    <select class="form-control" id="status">
+                      <option selected disabled>Please select the Published</option>
+                      <option value="1">Yes</option>
+                      <option value="0">No</option>
+                    </select>
                   </div>
                 </div>
                 <!-- /.card-body -->
@@ -149,17 +170,23 @@
                 <table id="example1" class="table table-bordered table-striped">
                   <thead>
                   <tr>
-                    <th>Category Name</th>
+                    <th>Title</th>
+                    <th>Category</th>
                     <th>Action</th>
                   </tr>
                   </thead>
                   <tbody>
-                    @foreach ($categories as $item)
+                    @foreach ($posts as $item)
                       <tr>
-                        <td>{{ $item->name }}</td>
+                        <td>{{ $item->title }}</td>
+                        <td>{{ $item->category->name }}</td>
                         <td>
-                          <a class="editCategory btn btn-info" data-id="{{ $item->id }}" data-name="{{ $item->name }}">Edit</a>
-                          <a class="removeCategory btn btn-danger" data-id="{{ $item->id }}">Remove</a>
+                          <a class="editPost btn btn-info" 
+                            data-id="{{ $item->id }}" 
+                            data-title="{{ $item->title }}" 
+                            data-content="{{ $item->content }}" 
+                            data-category="{{ $item->category_id }}">Edit</a>
+                          <a class="removePost btn btn-danger" data-id="{{ $item->id }}">Remove</a>
                         </td>
                       </tr>
                     @endforeach
@@ -170,7 +197,7 @@
                     <div class="modal-dialog">
                       <div class="modal-content">
                         <div class="modal-header">
-                          <h4 class="modal-title">Edit Category</h4>
+                          <h4 class="modal-title">Edit Post</h4>
                           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">×</span>
                           </button>
@@ -179,8 +206,29 @@
                           <input type="hidden" class="form-control" id="editId" readonly required>
                           <div class="card-body">
                             <div class="form-group">
-                              <label for="name">Category Name</label>
-                              <input type="text" class="form-control" id="editName" placeholder="Category Name" required>
+                              <label for="editTitle">Title</label>
+                              <input type="text" class="form-control" id="editTitle" placeholder="Title" required>
+                            </div>
+                            <div class="form-group">
+                              <label for="editCategory">Category</label>
+                              <select class="form-control" id="category_id">
+                                <option selected disabled>Please select the Category</option>
+                                @foreach($categories as $category)
+                                  <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                @endforeach
+                              </select>
+                            </div>
+                            <div class="form-group">
+                              <label for="editContent">Content</label>
+                              <textarea name="editContent" id="editContent" cols="30" rows="10" class="form-control"></textarea>
+                            </div>
+                            <div class="form-group">
+                              <label for="category">Published</label>
+                              <select class="form-control" id="status">
+                                <option selected disabled>Please select the Published</option>
+                                <option value="1">Yes</option>
+                                <option value="0">No</option>
+                              </select>
                             </div>
                           </div>
                           <!-- /.card-body -->
@@ -255,16 +303,36 @@
 <script src="{{ asset('assets') }}/dist/js/adminlte.min.js"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="{{ asset('assets') }}/dist/js/demo.js"></script>
+<!-- Page specific script -->
 <script src="{{ asset('assets') }}/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
 <script src="{{ asset('assets') }}/plugins/datatables/jquery.dataTables.min.js"></script>
 <script src="{{ asset('assets') }}/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
 <script src="{{ asset('assets') }}/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
-<!-- Page specific script -->
+
 <script>
   $(function () {
-    bsCustomFileInput.init();
+    $("#example1").DataTable({
+      "responsive": true, "lengthChange": false, "autoWidth": false,
+      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+    $('#example1').DataTable({
+      "paging": true,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": true,
+      "info": true,
+      "autoWidth": false,
+      "responsive": true,
+    });
   });
+</script>
+<script>
+$(function () {
+  bsCustomFileInput.init();
+});
+</script>
 
+<script>
   function csrfToken() {
     $.ajaxSetup({
       headers: {
@@ -276,21 +344,21 @@
   $(document).ready(function() {
     $('#btnSave').on('click', function(e) {
       e.preventDefault() // Mencegah formnya ke refresh
-      const name = $('#name').val() // Mengambil value dari field role name
+      const roleName = $('#roleName').val() // Mengambil value dari field role name
       csrfToken() // Memanggil token Laravel
-      console.log(name);
+
       try {
-        if (typeof name !== 'string' || !name) {
-          alert('Category should be non-empty string')
+        if (typeof roleName !== 'string' || !roleName) {
+          alert('Role name should be non-empty string')
           return
         }
 
         $.ajax({
-          url: "/categories",
+          url: '/roles',
           type: 'POST',
           dataType: 'json',
           async: true,
-          data: {name},
+          data: {roleName},
           error: function (err) {
             console.error(err)
             alert(err.message)
@@ -299,7 +367,7 @@
           success: function (response) {
             console.log(response)
             alert(response.message)
-            location.href="categories"
+            location.href="roles"
             return
           }
         })
@@ -310,38 +378,38 @@
       }
     })
 
-    $('.editCategory').on('click', function() {
+    $('.editRole').on('click', function() {
       const id = $(this).data('id')
-      const name = $(this).data('name')
+      const roleName = $(this).data('name')
 
-      $("#editName").val(name)
+      $("#editRoleName").val(roleName)
       $("#editId").val(id)
-      $("#editCategoryModal").modal('show')
+      $("#editRoleModal").modal('show')
     })
 
     $("#btnUpdate").on('click', function(e) {
       e.preventDefault()
-      const name = $("#editName").val()
+      const roleName = $("#editRoleName").val()
       const id = $("#editId").val()
       csrfToken()
 
       try {
-        if (typeof name !== 'string' || !name) {
-          alert('Category name should be non-empty string')
+        if (typeof roleName !== 'string' || !roleName) {
+          alert('Role name should be non-empty string')
           return
         }
 
         if (typeof id !== 'string' || !id) {
-          alert('Id should be non-empty string')
+          alert('Id name should be non-empty string')
           return
         }
 
         $.ajax({
-          url: `/categories/update/${id}`,
+          url: `/roles/update/${id}`,
           type: 'PUT',
           dataType: 'json',
           async: true,
-          data: {name},
+          data: {roleName},
           error: function (err) {
             console.error(err)
             alert(err.message)
@@ -350,7 +418,7 @@
           success: function (response) {
             console.log(response)
             alert(response.message)
-            location.href="categories"
+            location.href="roles"
             return
           }
         })
@@ -361,10 +429,10 @@
       }
     })
 
-    $(".removeCategory").on('click', function() {
+    $(".removeRole").on('click', function() {
       const id = $(this).data('id')
       $("#removeId").val(id)
-      $("#removeCategoryModal").modal('show')
+      $("#removeRoleModal").modal('show')
     })
 
     $("#btnRemove").on('click', function(e) {
@@ -379,7 +447,7 @@
         }
 
         $.ajax({
-          url: `/categories/delete/${id}`,
+          url: `/roles/delete/${id}`,
           type: 'DELETE',
           dataType: 'json',
           async: true,
@@ -391,7 +459,7 @@
           success: function (response) {
             console.log(response)
             alert(response.message)
-            location.href="categories"
+            location.href="roles"
             return
           }
         })
