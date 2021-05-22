@@ -9,9 +9,11 @@ use Illuminate\Support\Str;
 class RoleController extends Controller
 {
     function index() {
+        $roleUser = Role::where('id', session()->get('role_id'))->first();
         $roles = Role::all();
         return view('dashboard.roles.index', [
-            'roles' => $roles
+            'roles' => $roles,
+            'roleUser' => $roleUser
         ]);
     }
 

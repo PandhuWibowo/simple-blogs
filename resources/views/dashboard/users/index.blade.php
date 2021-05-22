@@ -172,6 +172,7 @@
                     <th>Name</th>
                     <th>Email</th>
                     <th>Role</th>
+                    {{-- <th>Phone</th> --}}
                     <th>Action</th>
                   </tr>
                   </thead>
@@ -181,6 +182,7 @@
                         <td>{{ $user->name }}</td>
                         <td>{{ $user->email }}</td>
                         <td>{{ $user->role->name }}</td>
+                        {{-- <td>{{ $user->phone->phone }}</td> --}}
                         <td>
                           <a class="editUser btn btn-info" 
                             data-id="{{ $user->id }}" 

@@ -67,4 +67,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(Post::class, 'user_id', 'id');
     }
+
+    /**
+     * Get the phone associated with the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function phone()
+    {
+        return $this->hasOne(Phone::class, 'user_id', 'id');
+    }
 }

@@ -13,10 +13,10 @@ class CategorySeeder extends Seeder
      */
     public function run()
     {
-        DB::table('categories')->insert([
-            'id' => '28037a79-2bc0-4181-a65f-8f154f6de4c5',
-            'name' => 'General',
-            'short_description' => 'General category of post'
-        ]);
+        // DB::table('categories')->insert([
+        //     'id' => '28037a79-2bc0-4181-a65f-8f154f6de4c5',
+        //     'name' => 'General',
+        //     'short_description' => 'General category of post'
+        // ]);
     }
 }

@@ -19,7 +19,6 @@ class LoginController extends Controller
         ]);
 
         $userInfo = User::where('email', $request->email)->first();
-        
         if (!$userInfo || empty($userInfo)) return back()->with('failed', 'Kamu belum terdaftar');
         else {
             if (Hash::check($request->password, $userInfo->password)) {

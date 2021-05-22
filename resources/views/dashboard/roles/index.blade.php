@@ -57,38 +57,57 @@
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
-          <li class="nav-item active">
-            <a href="{{ url('roles') }}" class="nav-link">
-              <i class="nav-icon fas fa-user-tag"></i>
-              <p>
-                Roles
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="{{ url('categories') }}" class="nav-link">
-                <i class="nav-icon fas fa-tags"></i>
-              <p>
-                Categories
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="{{ url('users') }}" class="nav-link">
-                <i class="nav-icon fas fa-user"></i>
-              <p>
-                Users
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="{{ url('posts') }}" class="nav-link">
-              <i class="nav-icon fas fa-newspaper"></i>
-              <p>
-                Posts
-              </p>
-            </a>
-          </li>
+          @if($roleUser->name === 'Super Admin')
+            <li class="nav-item active">
+              <a href="{{ url('roles') }}" class="nav-link">
+                <i class="nav-icon fas fa-user-tag"></i>
+                <p>
+                  Roles
+                </p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{{ url('categories') }}" class="nav-link">
+                  <i class="nav-icon fas fa-tags"></i>
+                <p>
+                  Categories
+                </p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{{ url('users') }}" class="nav-link">
+                  <i class="nav-icon fas fa-user"></i>
+                <p>
+                  Users
+                </p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{{ url('posts') }}" class="nav-link">
+                <i class="nav-icon fas fa-newspaper"></i>
+                <p>
+                  Posts
+                </p>
+              </a>
+            </li>
+          @elseif($roleUser->name === 'Editor')
+            <li class="nav-item">
+              <a href="{{ url('categories') }}" class="nav-link">
+                  <i class="nav-icon fas fa-tags"></i>
+                <p>
+                  Categories
+                </p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{{ url('posts') }}" class="nav-link">
+                <i class="nav-icon fas fa-newspaper"></i>
+                <p>
+                  Posts
+                </p>
+              </a>
+            </li>
+          @endif
         </ul>
       </nav>
       <!-- /.sidebar-menu -->
